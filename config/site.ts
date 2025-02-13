@@ -1,18 +1,17 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Next.js",
+  name: "LyricsType",
   description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+    "See how fast you can type the lyrics of your favourite songs",
   mainNav: [
     {
-      title: "Home",
-      href: "/",
+      title: "Play",
+      href: "/play",
     },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
+    twitter: "https://twitter.com/vulcanwm",
+    github: "https://github.com/VulcanWM/lyricstype",
   },
 }
