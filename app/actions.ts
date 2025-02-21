@@ -2,10 +2,31 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { headers } from 'next/headers';
 
 export async function getLyrics(songUrl: string, startSection: string, endSection: string) {
   try {
-    const { data } = await axios.get(songUrl);
+    console.log("Fetching lyrics for", songUrl);
+    
+    // Get the host from headers
+    const headersList = await headers();
+    const host = headersList.get('host');
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    
+    // Construct full URL for the proxy endpoint
+    const proxyUrl = `${protocol}://${host}/api/proxy?url=${encodeURIComponent(songUrl)}`;
+    console.log("Proxy URL:", proxyUrl);
+    
+    const { data } = await axios.get(proxyUrl, {
+      httpsAgent: undefined,
+      proxy: false,
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      }
+    });
+
+    console.log(data)
+
     const $ = cheerio.load(data);
 
     let lyricsArray = $("div[data-lyrics-container='true']")
@@ -20,6 +41,10 @@ export async function getLyrics(songUrl: string, startSection: string, endSectio
       .get();
 
     let lyrics = lyricsArray.join("\n\n");
+
+    console.log("Lyrics fetched successfully.");
+    console.log("Lyrics length:", lyrics.length);
+    console.log("Lyrics:", lyrics);
 
     // Find the last occurrence of startSection
     const startIndex = lyrics.lastIndexOf(startSection);
